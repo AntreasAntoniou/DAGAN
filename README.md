@@ -1,5 +1,5 @@
 # DAGAN
-Data Augmentation Generative Adversarial Networks
+Implementation of Data Augmentation Generative Adversarial Networks
 
 ## Introduction
 
