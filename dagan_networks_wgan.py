@@ -93,7 +93,7 @@ class DAGAN:
         if z_input is None:
             z_input = tf.random_normal([self.batch_size, self.z_dim], mean=0, stddev=1)
 
-        generated_samples, g_conv_encoder, encoder_layers, decoder_layers, decoder_layers = self.g(z_input,
+        generated_samples, encoder_layers, decoder_layers = self.g(z_input,
                                conditional_images,
                                training=self.training_phase,
                                dropout_rate=self.dropout_rate)
@@ -152,11 +152,10 @@ class DAGAN:
             x_g = self.generate(input_a)
 
             g_same_class_outputs, g_discr_features = self.d(x_g, input_a, training=self.training_phase,
-                                          name='g_same_class', dropout_rate=self.dropout_rate)
+                                          dropout_rate=self.dropout_rate)
 
             t_same_class_outputs, t_discr_features = self.d(input_b, input_a, training=self.training_phase,
-                                          dropout_rate=self.dropout_rate,
-                                          name='t_same_class')
+                                          dropout_rate=self.dropout_rate)
 
             # Remove comments to save discriminator feature activations
             # self.save_features(name="generated_discr_layers", features=g_discr_features)

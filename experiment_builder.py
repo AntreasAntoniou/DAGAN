@@ -110,6 +110,8 @@ class ExperimentBuilder(object):
 
                     total_g_loss = 0.
                     total_d_loss = 0.
+                    save_path = self.saver.save(sess, "{}/{}_{}.ckpt".format(self.saved_models_filepath,
+                                                                             self.experiment_name, e))
                     with tqdm.tqdm(total=self.total_train_batches) as pbar_train:
                         x_train_a_gan_list, x_train_b_gan_same_class_list = self.data.get_train_batch()
 
@@ -198,8 +200,6 @@ class ExperimentBuilder(object):
                     total_g_loss /= (self.total_train_batches * self.gen_iter)
 
                     total_d_loss /= (self.total_train_batches * self.disc_iter)
-                    save_path = self.saver.save(sess, "{}/{}_{}.ckpt".format(self.saved_models_filepath,
-                                                                             self.experiment_name, e))
 
                     print("Epoch {}: d_loss: {}, wg_loss: {}".format(e, total_d_loss, total_g_loss))
 

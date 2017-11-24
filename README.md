@@ -21,7 +21,9 @@ Then download Omniglot or VGG-Face as you see fit for your purposes.
 
 To train a DAGAN first you must make sure you get the datasets. Once that is done one can train a DAGAN using:
 
-```python train_omniglot_dagan.py --batch_size 32 --generator_inner_layers 3 --discriminator_inner_layers 5 --num_generations 64 --experiment_title omniglot_dagan_experiment_default --num_of_gpus 1 --z_dim 100 --dropout_rate_value 0.5```
+```
+python train_omniglot_dagan.py --batch_size 32 --generator_inner_layers 3 --discriminator_inner_layers 5 --num_generations 64 --experiment_title omniglot_dagan_experiment_default --num_of_gpus 1 --z_dim 100 --dropout_rate_value 0.5
+```
 
 Where generator and discriminator inner layers represent the number of inner layers per MultiLayer in generator and discriminator respectively. Number of generations refers to how many generated samples should be generated for the spherical interpolations at the end of each epoch.
 
@@ -81,10 +83,16 @@ In this case we expect the dataset to have the form [num_classes, num_samples, i
 
 The model training automatically uses unseen data to produce some generations at the end of each epoch, however once you have trained a model satisfactorily you can generate samples for the whole of the validation set using the following command:
 
-```python gen_omniglot_dagan.py -batch_size 32 --generator_inner_layers 3 --discriminator_inner_layers 5 --num_generations 64 --experiment_title omniglot_dagan_experiment_default --num_of_gpus 1 --z_dim 100 --dropout_rate_value 0.5 --continue_from_epoch 38```
-
+```
+python gen_omniglot_dagan.py -batch_size 32 --generator_inner_layers 3 --discriminator_inner_layers 5 --num_generations 64 --experiment_title omniglot_dagan_experiment_default --num_of_gpus 1 --z_dim 100 --dropout_rate_value 0.5 --continue_from_epoch 38
+```
 All the arguments must match the trained network's arguments and furthermore the continue_from_epoch argument must have the epoch of the best model we want to generate from.
 
 ## Additional generated data not shown in the paper
 
 For further generated data please visit https://drive.google.com/drive/folders/1IqdhiQzxHysSSnfSrGA9_jKTWzp9gl0k?usp=sharing
+
+## Acknowledgements
+
+Special thanks to the CDT in Data Science at the University of Edinburgh for providing the funding and resources for this project.
+Furthermore, special thanks to my colleague James Owers for reviewing this code and providing improvements and suggestions.

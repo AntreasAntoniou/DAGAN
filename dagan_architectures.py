@@ -238,6 +238,7 @@ class UResNetGenerator:
                             for j in range(self.inner_layers[i]):
                                 outputs = self.add_res_net_encoder_layer(input=outputs,
                                                                         training=training,
+                                                                        name="encoder_layer_{}_{}".format(i, j),
                                                                         layer_to_skip_connect=current_layers,
                                                                         num_features=self.layer_sizes[i],
                                                                         dim_reduce=False,
@@ -245,7 +246,7 @@ class UResNetGenerator:
                                                                         dropout_rate=dropout_rate)
                                 encoder_inner_layers.append(outputs)
                                 current_layers.append(outputs)
-                            outputs = self.add_res_net_encoder_layer(input=outputs,
+                            outputs = self.add_res_net_encoder_layer(input=outputs, name="encoder_layer_{}".format(i),
                                 training=training, layer_to_skip_connect=current_layers,
                                 local_inner_layers=encoder_inner_layers,
                                 num_features=self.layer_sizes[i],
@@ -519,16 +520,16 @@ class Discriminator:
                                                                          local_inner_layers=encoder_inner_layers)
                                 current_layers.append(outputs)
                             outputs = self.add_res_net_encoder_layer(input=outputs,
-                                                                                     name="encoder_outer_conv_{}"
-                                                                                     .format(i),
-                                                                                     training=training,
-                                                                                     layer_to_skip_connect=
-                                                                                     current_layers[-2],
-                                                                                     local_inner_layers=
-                                                                                     encoder_inner_layers,
-                                                                                     num_features=self.layer_sizes[i],
-                                                                                     dropout_rate=dropout_rate,
-                                                                                     dim_reduce=True)
+                                                                     name="encoder_outer_conv_{}"
+                                                                     .format(i),
+                                                                     training=training,
+                                                                     layer_to_skip_connect=
+                                                                     current_layers[-2],
+                                                                     local_inner_layers=
+                                                                     encoder_inner_layers,
+                                                                     num_features=self.layer_sizes[i],
+                                                                     dropout_rate=dropout_rate,
+                                                                     dim_reduce=True)
                             current_layers.append(outputs)
                         encoder_layers.append(outputs)
 
@@ -537,7 +538,7 @@ class Discriminator:
             with tf.variable_scope('discriminator_out'):
                 outputs = tf.layers.dense(flatten, 1, name='outputs')
         self.reuse = True
-        self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=name)
+        self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
         #view_names_of_variables(self.variables)
         if self.build:
             print("discr layers", self.conv_layer_num)
