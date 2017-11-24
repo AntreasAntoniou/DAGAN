@@ -13,8 +13,8 @@ To use the DAGAN repository you must first install the project dependencies. Thi
 
 ## Datasets
 
-To download the datasets please go to https://drive.google.com/drive/folders/15x2C11OrNeKLMzBDHrv8NPOwyre6H3O5?usp=sharing.
-
+To download the datasets please go to the
+<a href="https://drive.google.com/drive/folders/15x2C11OrNeKLMzBDHrv8NPOwyre6H3O5?usp=sharing" target="_blank">dataset gdrive folder</a>.
 Then download Omniglot or VGG-Face as you see fit for your purposes.
 
 ## Training a DAGAN
