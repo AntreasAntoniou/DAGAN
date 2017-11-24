@@ -91,7 +91,7 @@ All the arguments must match the trained network's arguments and furthermore the
 
 ## Additional generated data not shown in the paper
 
-For further generated data please visit https://drive.google.com/drive/folders/1IqdhiQzxHysSSnfSrGA9_jKTWzp9gl0k?usp=sharing.
+For further generated data please visit <a src="https://drive.google.com/drive/folders/1IqdhiQzxHysSSnfSrGA9_jKTWzp9gl0k?usp=sharing" target="blank">my google drive</a>.
 
 ## Acknowledgements
 
