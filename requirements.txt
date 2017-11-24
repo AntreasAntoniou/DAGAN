@@ -1,0 +1,5 @@
+tensorflow==1.4.0
+tqdm==4.11.2
+numpy==1.13.1
+scipy==0.18.1
+Pillow==4.3.0
