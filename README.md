@@ -79,6 +79,7 @@ An example for a balanced dataset is:
 
 In this case we expect the dataset to have the form [num_classes, num_samples, im_height, im_width, im_channels] but the num samples should be different for each class therefore when the shape is checked it should only return [num_classes,].
 
+Once your data provider is ready use a template such as he train_omniglot_dagan.py and simply change the data provider that is being passed. Then just run the experiment. This should be sufficient for any new dataset.
 ## To Generate Data
 
 The model training automatically uses unseen data to produce some generations at the end of each epoch, however once you have trained a model satisfactorily you can generate samples for the whole of the validation set using the following command:
