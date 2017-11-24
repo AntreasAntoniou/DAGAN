@@ -21,8 +21,7 @@ Then download Omniglot or VGG-Face as you see fit for your purposes.
 
 To train a DAGAN first you must make sure you get the datasets. Once that is done one can train a DAGAN using:
 
-```python train_omniglot_dagan.py --batch_size 32 --generator_inner_layers 3 --discriminator_inner_layers 5 --num_generations 64 --experiment_title omniglot_dagan_experiment_default --num_of_gpus 1 --z_dim 100 --dropout_rate_value 0.5 
-```
+```python train_omniglot_dagan.py --batch_size 32 --generator_inner_layers 3 --discriminator_inner_layers 5 --num_generations 64 --experiment_title omniglot_dagan_experiment_default --num_of_gpus 1 --z_dim 100 --dropout_rate_value 0.5```
 
 Where generator and discriminator inner layers represent the number of inner layers per MultiLayer in generator and discriminator respectively. Number of generations refers to how many generated samples should be generated for the spherical interpolations at the end of each epoch.
 
