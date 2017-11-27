@@ -27,7 +27,7 @@ Here, `generator_inner_layers` and `discriminator_inner_layers` refer to the num
 
 ## Multi-GPU Usage
 
-Our implementation supports multi-GPU training. Simply pass `--num_of_gpus <x>` to the script to train on <x> GPUs (note that this only works if the GPUs are on the same machine).
+Our implementation supports multi-GPU training. Simply pass `--num_of_gpus <x>` to the script to train on  x GPUs (note that this only works if the GPUs are on the same machine).
 
 ## Defining a new task for the DAGAN
 
