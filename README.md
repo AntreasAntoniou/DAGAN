@@ -13,7 +13,7 @@ To use the DAGAN repository you must first install the project dependencies. Thi
 
 ## Datasets
 
-The Omniglot and VGG-Face datasets can be obtained in numpy format <a href="https://drive.google.com/drive/folders/15x2C11OrNeKLMzBDHrv8NPOwyre6H3O5?usp=sharing" target="_blank">here</a>.
+The Omniglot and VGG-Face datasets can be obtained in numpy format <a href="https://drive.google.com/drive/folders/15x2C11OrNeKLMzBDHrv8NPOwyre6H3O5?usp=sharing" target="_blank">here</a>. They should then be placed into the `datasets` folder.
 
 ## Training a DAGAN
 
@@ -27,7 +27,7 @@ Here, `generator_inner_layers` and `discriminator_inner_layers` refer to the num
 
 ## Multi-GPU Usage
 
-Our implementation supports multi gpu training. Simply pass `--num_of_gpus 4` to the script to train on 4 GPUs (note that this only works if the GPUs are on the same machine).
+Our implementation supports multi-GPU training. Simply pass `--num_of_gpus <x>` to the script to train on <x> GPUs (note that this only works if the GPUs are on the same machine).
 
 ## Defining a new task for the DAGAN
 
@@ -90,7 +90,7 @@ All the arguments must match the trained network's arguments and the `continue_f
 ## Additional generated data not shown in the paper
 
 For further generated data please visit 
-<a href="https://drive.google.com/drive/folders/1IqdhiQzxHysSSnfSrGA9_jKTWzp9gl0k?usp=sharing" target="_blank">my google drive folder</a>.
+<a href="https://drive.google.com/drive/folders/1IqdhiQzxHysSSnfSrGA9_jKTWzp9gl0k?usp=sharing" target="_blank">my Google Drive folder</a>.
 
 ## Acknowledgements
 
