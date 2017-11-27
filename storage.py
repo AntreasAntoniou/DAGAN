@@ -2,6 +2,7 @@ from PIL import Image
 import numpy as np
 import os
 import csv
+
 def save_experiment(experiment_name, train_dict, val_dict):
     import pickle
     order_dicts = ["train", "valid"]
@@ -10,8 +11,6 @@ def save_experiment(experiment_name, train_dict, val_dict):
             pickle.dump(entry, fp, pickle.HIGHEST_PROTOCOL)
 
 def save_images_3_channels(batch_in, batch_gen, name, rows, columns, batch_r_gen=None):
-    # batch_images = 255 * ((batch_images - np.min(batch_images)) / (np.max(batch_images) - np.min(batch_images)))
-
     if batch_r_gen is None:
         images_in = []
         images_out = []
@@ -27,12 +26,10 @@ def save_images_3_channels(batch_in, batch_gen, name, rows, columns, batch_r_gen
 
         total_width = widths[0] * (images_per_row * 2 + 1)
         max_height = heights[0] * columns
-        empty_image = np.zeros((batch_in.shape[1], batch_in.shape[2], batch_in.shape[3]))
-        #print(empty_image.shape)
         new_im = Image.new('RGB', (total_width, max_height))
 
         y_offset = 0
-        # print(images_per_row)
+
         for j in range(rows):
             x_offset = 0
             for i in range(images_per_row * 2 + 1):
@@ -53,8 +50,7 @@ def save_images_3_channels(batch_in, batch_gen, name, rows, columns, batch_r_gen
             images_in.append(Image.fromarray(np.uint8(image_in)))
             images_out.append(Image.fromarray(np.uint8(image_out)))
             images_r_out.append(Image.fromarray(np.uint8(image_r_out)))
-            # print(np.max(np.uint8(image_in[:, :, 0])))
-            # print(np.min(np.uint8(image_in[:, :, 0])))
+
 
         widths, heights = zip(*(i.size for i in images_in))
         if columns == None:
@@ -64,27 +60,22 @@ def save_images_3_channels(batch_in, batch_gen, name, rows, columns, batch_r_gen
 
         total_width = widths[0] * (images_per_row * 3 + 2)
         max_height = heights[0] * columns
-        empty_image = np.zeros((batch_in.shape[1], batch_in.shape[2], batch_in.shape[3]))
-        # print(empty_image.shape)
+
         new_im = Image.new('RGB', (total_width, max_height))
 
         y_offset = 0
-        # print(images_per_row)
+
         for j in range(rows):
             x_offset = 0
             for i in range(images_per_row * 3 + 2):
                 if i < images_per_row:
                     new_im.paste(images_in[images_per_row * j + i], (x_offset, y_offset))
-                # print("in", images_per_row*j+i)
-                #                 print("in", j, i)
-                    # print("frame", j, i)
+
                 elif i > images_per_row and i<2*images_per_row+1:
                     new_im.paste(images_out[images_per_row * j + i - images_per_row - 1], (x_offset, y_offset))
                 elif i > 2*images_per_row + 1:
                     new_im.paste(images_r_out[images_per_row * j + i - (2*(images_per_row - 1))-4], (x_offset, y_offset))
-                    #print(images_per_row * j + i - (2*(images_per_row - 1))-4)
-                # print("out", images_per_row*j+i-images_per_row-1)
-                #                 print("out", j, i)
+
                 x_offset += images_in[0].size[0]
             y_offset += images_in[0].size[1]
     directory_prefix = "/".join(name.split("/")[:-1])
@@ -93,8 +84,6 @@ def save_images_3_channels(batch_in, batch_gen, name, rows, columns, batch_r_gen
     new_im.save(name)
 
 def save_images_1_channel(batch_in, batch_gen, name, columns, rows, batch_r_gen=None):
-    # batch_images = 255 * ((batch_images - np.min(batch_images)) / (np.max(batch_images) - np.min(batch_images)))
-
     if batch_r_gen == None:
         images_in = []
         images_out = []
@@ -102,8 +91,6 @@ def save_images_1_channel(batch_in, batch_gen, name, columns, rows, batch_r_gen=
         for image_in, image_out in zip(batch_in, batch_gen):
             images_in.append(Image.fromarray(np.uint8(image_in[:, :, 0]), mode="L"))
             images_out.append(Image.fromarray(np.uint8(image_out[:, :, 0]), mode="L"))
-            # print(np.max(np.uint8(image_in[:, :, 0])))
-            # print(np.min(np.uint8(image_in[:, :, 0])))
 
         widths, heights = zip(*(i.size for i in images_in))
 
@@ -118,7 +105,7 @@ def save_images_1_channel(batch_in, batch_gen, name, columns, rows, batch_r_gen=
         new_im = Image.new('L', (total_width, max_height), color=255)
 
         y_offset = 0
-        # print(images_per_row)
+
         for j in range(rows):
             x_offset = 0
             for i in range(images_per_row * 2 + 1):
@@ -142,8 +129,6 @@ def save_images_1_channel(batch_in, batch_gen, name, columns, rows, batch_r_gen=
             images_in.append(Image.fromarray(np.uint8(image_in[:, :, 0]), mode="L"))
             images_out.append(Image.fromarray(np.uint8(image_out[:, :, 0]), mode="L"))
             images_r_out.append(Image.fromarray(np.uint8(image_r_out[:, :, 0]), mode="L"))
-            # print(np.max(np.uint8(image_in[:, :, 0])))
-            # print(np.min(np.uint8(image_in[:, :, 0])))
 
         widths, heights = zip(*(i.size for i in images_in))
 
@@ -159,26 +144,20 @@ def save_images_1_channel(batch_in, batch_gen, name, columns, rows, batch_r_gen=
         new_im = Image.new('L', (total_width, max_height), color=255)
 
         y_offset = 0
-        # print(images_per_row)
         for j in range(rows):
             x_offset = 0
             for i in range(images_per_row * 3 + 2):
                 if i < images_per_row:
                     new_im.paste(images_in[images_per_row * j + i], (x_offset, y_offset))
-                # print("in", images_per_row*j+i)
-                #                 print("in", j, i)
                 elif i == images_per_row:
                     new_im.paste(empty_image, (x_offset, y_offset))
-                    # print("frame", j, i)
                 elif i > images_per_row and i<2*images_per_row+1:
                     new_im.paste(images_out[images_per_row * j + i - images_per_row - 1], (x_offset, y_offset))
                 elif i == 2*images_per_row + 1:
                     new_im.paste(empty_image, (x_offset, y_offset))
                 elif i > 2*images_per_row + 1:
                     new_im.paste(images_r_out[images_per_row * j + i - (2*(images_per_row - 1))-4], (x_offset, y_offset))
-                    #print(images_per_row * j + i - (2*(images_per_row - 1))-4)
-                # print("out", images_per_row*j+i-images_per_row-1)
-                #                 print("out", j, i)
+
                 x_offset += images_in[0].size[0]
             y_offset += images_in[0].size[1]
 
