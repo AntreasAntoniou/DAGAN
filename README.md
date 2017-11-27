@@ -93,9 +93,9 @@ All the arguments must match the trained network's arguments and furthermore the
 ## Additional generated data not shown in the paper
 
 For further generated data please visit 
-<a href="https://drive.google.com/drive/folders/1IqdhiQzxHysSSnfSrGA9_jKTWzp9gl0k?usp=sharing" target="_blank">my google drive folder</a>
+<a href="https://drive.google.com/drive/folders/1IqdhiQzxHysSSnfSrGA9_jKTWzp9gl0k?usp=sharing" target="_blank">my google drive folder</a>.
 
 ## Acknowledgements
 
 Special thanks to the CDT in Data Science at the University of Edinburgh for providing the funding and resources for this project.
-Furthermore, special thanks to my colleague James Owers for reviewing this code and providing improvements and suggestions.
+Furthermore, special thanks to my colleagues James Owers, Todor Davchev, Elliot Crowley and Gavin Gray for reviewing this code and providing improvements and suggestions.
