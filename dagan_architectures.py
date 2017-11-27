@@ -5,6 +5,20 @@ from tensorflow.python.ops.nn_ops import leaky_relu
 from utils.network_summary import count_parameters
 
 
+def remove_duplicates(self, input_features):
+    """
+    Remove duplicate entries from layer list.
+    :param input_features: A list of layers
+    :return: Returns a list of unique feature tensors (i.e. no duplication).
+    """
+    feature_name_set = set()
+    non_duplicate_feature_set = []
+    for feature in input_features:
+        if feature.name not in feature_name_set:
+            non_duplicate_feature_set.append(feature)
+        feature_name_set.add(feature.name)
+    return non_duplicate_feature_set
+
 class UResNetGenerator:
     def __init__(self, layer_sizes, layer_padding, batch_size, num_channels=1,
                  inner_layers=0, name="g"):
@@ -63,20 +77,6 @@ class UResNetGenerator:
                                                  padding="SAME", activation=activation)
         return outputs
 
-    def remove_duplicates(self, input_features):
-        """
-        Remove duplicate entries from layer list.
-        :param input_features: A list of layers
-        :return: Returns a list of unique feature tensors (i.e. no duplication).
-        """
-        feature_name_set = set()
-        non_duplicate_feature_set = []
-        for feature in input_features:
-            if feature.name not in feature_name_set:
-                non_duplicate_feature_set.append(feature)
-            feature_name_set.add(feature.name)
-        return non_duplicate_feature_set
-
     def resize_batch(self, batch_images, size):
 
         """
@@ -122,7 +122,7 @@ class UResNetGenerator:
             current_layers = [input]
 
         current_layers.extend(local_inner_layers)
-        current_layers = self.remove_duplicates(current_layers)
+        current_layers = remove_duplicates(current_layers)
         outputs = tf.concat(current_layers, axis=3)
 
         if dim_reduce:
@@ -181,7 +181,7 @@ class UResNetGenerator:
             current_layers = [input]
 
         current_layers.extend(local_inner_layers)
-        current_layers = self.remove_duplicates(current_layers)
+        current_layers = remove_duplicates(current_layers)
         outputs = tf.concat(current_layers, axis=3)
 
         if dim_upscale:
@@ -223,7 +223,7 @@ class UResNetGenerator:
                 for i, layer_size in enumerate(self.layer_sizes):
                     encoder_inner_layers = [outputs]
                     with tf.variable_scope('g_conv{}'.format(i)):
-                        if i==0:
+                        if i==0: #first layer is a single conv layer instead of MultiLayer for best results
                             outputs = self.conv_layer(outputs, num_filters=64,
                                                       filter_size=(3, 3), strides=(2, 2))
                             outputs = leaky_relu(features=outputs)
@@ -233,7 +233,7 @@ class UResNetGenerator:
                             current_layers.append(outputs)
                             encoder_inner_layers.append(outputs)
                         else:
-                            for j in range(self.inner_layers[i]):
+                            for j in range(self.inner_layers[i]): #Build the inner Layers of the MultiLayer
                                 outputs = self.add_encoder_layer(input=outputs,
                                                                  training=training,
                                                                  name="encoder_layer_{}_{}".format(i, j),
@@ -244,6 +244,7 @@ class UResNetGenerator:
                                                                  dropout_rate=dropout_rate)
                                 encoder_inner_layers.append(outputs)
                                 current_layers.append(outputs)
+                            #add final dim reducing conv layer for this MultiLayer
                             outputs = self.add_encoder_layer(input=outputs, name="encoder_layer_{}".format(i),
                                                              training=training, layer_to_skip_connect=current_layers,
                                                              local_inner_layers=encoder_inner_layers,
@@ -254,7 +255,11 @@ class UResNetGenerator:
 
             g_conv_encoder = outputs
 
-            with tf.variable_scope("vector_expansion"):
+            with tf.variable_scope("vector_expansion"):  # Used for expanding the z injected noise to match the
+                                                         # dimensionality of the various decoder MultiLayers, injecting
+                                                         # noise into multiple decoder layers in a skip-connection way
+                                                         # improves quality of results. We inject in the first 3 decode
+                                                         # multi layers
                 num_filters = 8
                 concat_shape = tuple(encoder_layers[-1].get_shape())
                 concat_shape = [int(i) for i in concat_shape]
@@ -423,19 +428,6 @@ class Discriminator:
                                                  padding="SAME", activation=activation)
         return outputs
 
-    def remove_duplicates(self, input_features):
-        """
-        Remove duplicate entries from layer list.
-        :param input_features: A list of layers
-        :return:
-        """
-        feature_name_set = set()
-        non_duplicate_feature_set = []
-        for feature in input_features:
-            if feature.name not in feature_name_set:
-                non_duplicate_feature_set.append(feature)
-            feature_name_set.add(feature.name)
-        return non_duplicate_feature_set
     def add_res_net_encoder_layer(self, input, name, training, layer_to_skip_connect, local_inner_layers, num_features,
                                   dim_reduce=False, dropout_rate=0.0):
 
@@ -463,7 +455,7 @@ class Discriminator:
             skip_connect_layer = layer_to_skip_connect
         current_layers = [input, skip_connect_layer]
         current_layers.extend(local_inner_layers)
-        current_layers = self.remove_duplicates(current_layers)
+        current_layers = remove_duplicates(current_layers)
         outputs = tf.concat(current_layers, axis=3)
         if dim_reduce:
             outputs = self.conv_layer(outputs, num_features, [3, 3], strides=(2, 2))

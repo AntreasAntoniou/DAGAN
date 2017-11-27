@@ -304,6 +304,7 @@ class OmniglotDAGANDataset(DAGANDataset):
 
     def load_dataset(self, gan_training_index):
         self.x = np.load("datasets/omniglot_data.npy")
+        self.x = self.x / np.max(self.x)
         x_train, x_test, x_val = self.x[:1200], self.x[1200:1600], self.x[1600:]
         x_train = x_train[:gan_training_index]
         return x_train, x_test, x_val
@@ -319,6 +320,7 @@ class OmniglotImbalancedDAGANDataset(DAGANImbalancedDataset):
             choose_samples = np.random.choice([i for i in range(1, 15)])
             x_temp.append(x[i, :choose_samples])
         self.x = np.array(x_temp)
+        self.x = self.x / np.max(self.x)
         x_train, x_test, x_val = self.x[:1200], self.x[1200:1600], self.x[1600:]
         x_train = x_train[:last_training_class_index]
 
@@ -333,6 +335,7 @@ class VGGFaceDAGANDataset(DAGANDataset):
     def load_dataset(self, gan_training_index):
 
         self.x = np.load("datasets/vgg_face_data.npy")
+        self.x = self.x / np.max(self.x)
         self.x = np.reshape(self.x, newshape=(2354, 100, 64, 64, 3))
         x_train, x_test, x_val = self.x[:1803], self.x[1803:2300], self.x[2300:]
         x_train = x_train[:gan_training_index]
