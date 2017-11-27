@@ -99,3 +99,6 @@ For further generated data please visit
 
 Special thanks to the CDT in Data Science at the University of Edinburgh for providing the funding and resources for this project.
 Furthermore, special thanks to my colleagues James Owers, Todor Davchev, Elliot Crowley and Gavin Gray for reviewing this code and providing improvements and suggestions.
+
+Furthermore, the interpolations used in this project are a result of the <a href="https://arxiv.org/abs/1609.04468" target="_blank">Sampling Generative Networks paper</a> by Tom White. 
+The code itself was found at https://github.com/dribnet/plat.
