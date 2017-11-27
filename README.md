@@ -76,7 +76,7 @@ class OmniglotDAGANDataset(DAGANDataset):
 
 In short, you need to define your own load_dataset function. This function should load your dataset in the form [num_classes, num_samples, im_height, im_width, im_channels]. Then you need to choose which classes go to each of your training, validation and test sets.
 
-2. Once your data loader is ready use a template such as train_omniglot_dagan.py and change the data loader that is being passed. This should be sufficient to run experiments on any new image dataset.
+2. Once your data loader is ready, use a template such as train_omniglot_dagan.py and change the data loader that is being passed. This should be sufficient to run experiments on any new image dataset.
 
 ## To Generate Data
 
