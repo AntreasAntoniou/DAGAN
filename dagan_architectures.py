@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.contrib.layers import batch_norm, layer_norm
 from tensorflow.python.ops.image_ops_impl import ResizeMethod
 from tensorflow.python.ops.nn_ops import leaky_relu
-from network_summary import count_parameters
+from utils.network_summary import count_parameters
 
 
 class UResNetGenerator:
@@ -67,7 +67,7 @@ class UResNetGenerator:
         """
         Remove duplicate entries from layer list.
         :param input_features: A list of layers
-        :return:
+        :return: Returns a list of unique feature tensors (i.e. no duplication).
         """
         feature_name_set = set()
         non_duplicate_feature_set = []
@@ -89,19 +89,19 @@ class UResNetGenerator:
 
         return images
 
-    def add_res_net_encoder_layer(self, input, name, training, dropout_rate, layer_to_skip_connect, local_inner_layers,
-                                  num_features, dim_reduce=False):
+    def add_encoder_layer(self, input, name, training, dropout_rate, layer_to_skip_connect, local_inner_layers,
+                          num_features, dim_reduce=False):
 
         """
         Adds a resnet encoder layer.
         :param input: The input to the encoder layer
         :param training: Flag for training or validation
         :param dropout_rate: A float or a placeholder for the dropout rate
-        :param layer_to_skip_connect: Layer to skip-connect this layer to.
+        :param layer_to_skip_connect: Layer to skip-connect this layer to
         :param local_inner_layers: A list with the inner layers of the current Multi-Layer
         :param num_features: Number of feature maps for the convolutions
-        :param dim_reduce: Boolean value indicating if this is a
-        :return:
+        :param dim_reduce: Boolean value indicating if this is a dimensionality reducing layer or not
+        :return: The output of the encoder layer
         """
         [b1, h1, w1, d1] = input.get_shape().as_list()
 
@@ -141,22 +141,22 @@ class UResNetGenerator:
 
         return outputs
 
-    def add_res_net_decoder_layer(self, input, name, training, dropout_rate, layer_to_skip_connect, local_inner_layers,
-                                  num_features, dim_upscale=False, h_size=None, w_size=None):
+    def add_decoder_layer(self, input, name, training, dropout_rate, layer_to_skip_connect, local_inner_layers,
+                          num_features, dim_upscale=False, h_size=None, w_size=None):
 
         """
         Adds a resnet decoder layer.
         :param input: Input features
         :param name: Layer Name
         :param training: Training placeholder or boolean flag
-        :param dropout_rate: float placeholder or float indicating the dropout rate
+        :param dropout_rate: Float placeholder or float indicating the dropout rate
         :param layer_to_skip_connect: Layer to skip connect to.
         :param local_inner_layers: A list with the inner layers of the current MultiLayer
         :param num_features: Num feature maps for convolution
         :param dim_upscale: Dimensionality upscale
         :param h_size: Height to upscale to
         :param w_size: Width to upscale to
-        :return:
+        :return: The output of the decoder layer
         """
         [b1, h1, w1, d1] = input.get_shape().as_list()
         if len(layer_to_skip_connect) >= 2:
@@ -204,12 +204,10 @@ class UResNetGenerator:
         return outputs
 
     def __call__(self, z_inputs, conditional_input, training=False, dropout_rate=0.0):
-
-
         """
         Apply network on data.
         :param z_inputs: Random noise to inject [batch_size, z_dim]
-        :param conditional_input: A batch of images to use as conditional [batch_size, height, width, channels]
+        :param conditional_input: A batch of images to use as conditionals [batch_size, height, width, channels]
         :param training: Training placeholder or boolean
         :param dropout_rate: Dropout rate placeholder or float
         :return: Returns x_g (generated images), encoder_layers(encoder features), decoder_layers(decoder features)
@@ -236,21 +234,21 @@ class UResNetGenerator:
                             encoder_inner_layers.append(outputs)
                         else:
                             for j in range(self.inner_layers[i]):
-                                outputs = self.add_res_net_encoder_layer(input=outputs,
-                                                                        training=training,
-                                                                        name="encoder_layer_{}_{}".format(i, j),
-                                                                        layer_to_skip_connect=current_layers,
-                                                                        num_features=self.layer_sizes[i],
-                                                                        dim_reduce=False,
-                                                                        local_inner_layers=encoder_inner_layers,
-                                                                        dropout_rate=dropout_rate)
+                                outputs = self.add_encoder_layer(input=outputs,
+                                                                 training=training,
+                                                                 name="encoder_layer_{}_{}".format(i, j),
+                                                                 layer_to_skip_connect=current_layers,
+                                                                 num_features=self.layer_sizes[i],
+                                                                 dim_reduce=False,
+                                                                 local_inner_layers=encoder_inner_layers,
+                                                                 dropout_rate=dropout_rate)
                                 encoder_inner_layers.append(outputs)
                                 current_layers.append(outputs)
-                            outputs = self.add_res_net_encoder_layer(input=outputs, name="encoder_layer_{}".format(i),
-                                training=training, layer_to_skip_connect=current_layers,
-                                local_inner_layers=encoder_inner_layers,
-                                num_features=self.layer_sizes[i],
-                                dim_reduce=True, dropout_rate=dropout_rate)
+                            outputs = self.add_encoder_layer(input=outputs, name="encoder_layer_{}".format(i),
+                                                             training=training, layer_to_skip_connect=current_layers,
+                                                             local_inner_layers=encoder_inner_layers,
+                                                             num_features=self.layer_sizes[i],
+                                                             dim_reduce=True, dropout_rate=dropout_rate)
                             current_layers.append(outputs)
                         encoder_layers.append(outputs)
 
@@ -291,7 +289,7 @@ class UResNetGenerator:
             current_layers = [outputs]
             with tf.variable_scope('g_deconv_layers'):
                 for i in range(len(self.layer_sizes)+1):
-                    if i<3:
+                    if i<3: #Pass the injected noise to the first 3 decoder layers for sharper results
                         outputs = tf.concat([z_layers[i], outputs], axis=3)
                         current_layers[-1] = outputs
                     idx = len(self.layer_sizes) - 1 - i
@@ -308,27 +306,27 @@ class UResNetGenerator:
                         decoder_inner_layers = [outputs]
                         for j in range(inner_layers):
                             if i==0 and j==0:
-                                outputs = self.add_res_net_decoder_layer(input=outputs,
-                                                                         name="decoder_inner_conv_{}_{}"
-                                                                         .format(i, j),
-                                                                         training=training,
-                                                                         layer_to_skip_connect=current_layers,
-                                                                         num_features=num_features,
-                                                                         dim_upscale=False,
-                                                                         local_inner_layers=decoder_inner_layers,
-                                                                         dropout_rate=dropout_rate)
+                                outputs = self.add_decoder_layer(input=outputs,
+                                                                 name="decoder_inner_conv_{}_{}"
+                                                                 .format(i, j),
+                                                                 training=training,
+                                                                 layer_to_skip_connect=current_layers,
+                                                                 num_features=num_features,
+                                                                 dim_upscale=False,
+                                                                 local_inner_layers=decoder_inner_layers,
+                                                                 dropout_rate=dropout_rate)
                                 decoder_inner_layers.append(outputs)
                             else:
-                                outputs = self.add_res_net_decoder_layer(input=outputs,
-                                                                        name="decoder_inner_conv_{}_{}"
-                                                                        .format(i, j), training=training,
-                                                                             layer_to_skip_connect=current_layers,
-                                                                        num_features=num_features,
-                                                                        dim_upscale=False,
-                                                                        local_inner_layers=decoder_inner_layers,
-                                                                        w_size=upscale_shape[1],
-                                                                        h_size=upscale_shape[2],
-                                                                         dropout_rate=dropout_rate)
+                                outputs = self.add_decoder_layer(input=outputs,
+                                                                 name="decoder_inner_conv_{}_{}"
+                                                                 .format(i, j), training=training,
+                                                                 layer_to_skip_connect=current_layers,
+                                                                 num_features=num_features,
+                                                                 dim_upscale=False,
+                                                                 local_inner_layers=decoder_inner_layers,
+                                                                 w_size=upscale_shape[1],
+                                                                 h_size=upscale_shape[2],
+                                                                 dropout_rate=dropout_rate)
                                 decoder_inner_layers.append(outputs)
                         current_layers.append(outputs)
                         decoder_layers.append(outputs)
@@ -337,7 +335,7 @@ class UResNetGenerator:
                             upscale_shape = encoder_layers[idx - 1].get_shape().as_list()
                             if idx == 0:
                                 upscale_shape = conditional_input.get_shape().as_list()
-                            outputs = self.add_res_net_decoder_layer(
+                            outputs = self.add_decoder_layer(
                                 input=outputs,
                                 name="decoder_outer_conv_{}".format(i),
                                 training=training,
@@ -367,8 +365,6 @@ class UResNetGenerator:
             # output images
             with tf.variable_scope('g_tanh'):
                 gan_decoder = tf.tanh(outputs, name='outputs')
-
-
 
         self.reuse = True
         self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='g')

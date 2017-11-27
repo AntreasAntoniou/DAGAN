@@ -11,17 +11,17 @@ class DAGAN:
         Initializes a DAGAN object.
         :param input_x_i: Input image x_i
         :param input_x_j: Input image x_j
-        :param dropout_rate: A dropout rate placeholder or a scalar to use throughout
-        :param generator_layer_sizes: A list with the number of feature maps per layer (generator) i.e. [64, 64, 64, 64]
+        :param dropout_rate: A dropout rate placeholder or a scalar to use throughout the network
+        :param generator_layer_sizes: A list with the number of feature maps per layer (generator) e.g. [64, 64, 64, 64]
         :param discriminator_layer_sizes: A list with the number of feature maps per layer (discriminator)
-                                                                                                   i.e. [64, 64, 64, 64]
-        :param generator_layer_padding: A list with the type of padding per layer (i.e. ["SAME", "SAME", "SAME","SAME"]
+                                                                                                   e.g. [64, 64, 64, 64]
+        :param generator_layer_padding: A list with the type of padding per layer (e.g. ["SAME", "SAME", "SAME","SAME"]
         :param z_inputs: A placeholder for the random noise injection vector z (usually gaussian or uniform distribut.)
         :param batch_size: An integer indicating the batch size for the experiment.
         :param z_dim: An integer indicating the dimensionality of the random noise vector (usually 100-dim).
         :param num_channels: Number of image channels
         :param is_training: A boolean placeholder for the training/not training flag
-        :param augment: A boolean placeholder of whether to augment the data using rotations
+        :param augment: A boolean placeholder that determines whether to augment the data using rotations
         :param discr_inner_conv: Number of inner layers per multi layer in the discriminator
         :param gen_inner_conv: Number of inner layers per multi layer in the generator
         :param num_gpus: Number of GPUs to use for training
@@ -46,7 +46,7 @@ class DAGAN:
 
     def rotate_data(self, image_a, image_b):
         """
-        Rotate 2 images by the same amount of degrees
+        Rotate 2 images by the same number of degrees
         :param image_a: An image a to rotate k degrees
         :param image_b: An image b to rotate k degrees
         :return: Two images rotated by the same amount of degrees
@@ -120,8 +120,8 @@ class DAGAN:
     def save_features(self, name, features):
         """
         Save feature activations from a network
-        :param name: Name to save features as.
-        :param features: The features to save.
+        :param name: A name for the summary of the features
+        :param features: The features to save
         """
         for i in range(len(features)):
             shape_in = features[i].get_shape().as_list()
@@ -142,7 +142,7 @@ class DAGAN:
     def loss(self, gpu_id):
 
         """
-        Builds models, calculates losses saves tensorboard information.
+        Builds models, calculates losses, saves tensorboard information.
         :param gpu_id: The GPU ID to calculate losses for.
         :return: Returns the generator and discriminator losses.
         """

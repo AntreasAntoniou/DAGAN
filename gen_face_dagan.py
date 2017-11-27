@@ -18,7 +18,7 @@ args = parser.parse_args()
 batch_size = args.batch_size
 num_gpus = args.num_of_gpus
 
-data = dataset.VGGFaceDAGANDataset(batch_size=batch_size, gan_training_index=1600, reverse_channels=True,
+data = dataset.VGGFaceDAGANDataset(batch_size=batch_size, last_training_class_index=1600, reverse_channels=True,
                                    num_of_gpus=num_gpus, gen_batches=10)
 
 experiment = ExperimentBuilder(parser, data=data)

@@ -1,10 +1,11 @@
-from dagan_networks_wgan import *
-import data as dataset
+import utils.interpolations
 import tqdm
-from storage import *
-from sampling import *
+from utils.storage import *
 from tensorflow.contrib import slim
-import interpolations
+
+from dagan_networks_wgan import *
+from utils.sampling import *
+
 
 class ExperimentBuilder(object):
     def __init__(self, parser, data):

@@ -1,10 +1,11 @@
-from tensorflow.contrib import slim
-import tqdm
-import numpy as np
-from dagan_networks_wgan import *
 import interpolations
-from sampling import sample_generator, sample_two_dimensions_generator
-from storage import save_statistics, build_experiment_folder
+import numpy as np
+import tqdm
+from utils.storage import save_statistics, build_experiment_folder
+from tensorflow.contrib import slim
+
+from dagan_networks_wgan import *
+from utils.sampling import sample_generator, sample_two_dimensions_generator
 
 
 class ExperimentBuilder(object):

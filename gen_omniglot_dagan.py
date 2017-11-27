@@ -18,7 +18,7 @@ args = parser.parse_args()
 batch_size = args.batch_size
 num_gpus = args.num_of_gpus
 
-data = dataset.OmniglotDAGANDataset(batch_size=batch_size, gan_training_index=900, reverse_channels=True,
-                                              num_of_gpus=num_gpus, gen_batches=1000)
+data = dataset.OmniglotDAGANDataset(batch_size=batch_size, last_training_class_index=900, reverse_channels=True,
+                                    num_of_gpus=num_gpus, gen_batches=1000)
 experiment = ExperimentBuilder(parser, data=data)
 experiment.run_experiment()
