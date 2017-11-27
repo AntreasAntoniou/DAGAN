@@ -23,7 +23,7 @@ After the datasets are downloaded and the dependencies are installed, a DAGAN ca
 python train_omniglot_dagan.py --batch_size 32 --generator_inner_layers 3 --discriminator_inner_layers 5 --num_generations 64 --experiment_title omniglot_dagan_experiment_default --num_of_gpus 1 --z_dim 100 --dropout_rate_value 0.5
 ```
 
-Here, `generator_inner_layers` and `discriminator_inner_layers` refer to the number of inner layers per MultiLayer in the generator and discriminator respectively. `num_generators` refers to the number of samples generated for use in the spherical interpolations at the end of each epoch.
+Here, `generator_inner_layers` and `discriminator_inner_layers` refer to the number of inner layers per MultiLayer in the generator and discriminator respectively. `num_generations` refers to the number of samples generated for use in the spherical interpolations at the end of each epoch.
 
 ## Multi-GPU Usage
 
