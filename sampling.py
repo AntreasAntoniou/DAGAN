@@ -1,6 +1,5 @@
 import scipy.misc
 import numpy as np
-from storage import save_images
 
 def unstack(np_array):
     new_list = []
@@ -30,8 +29,6 @@ def sample_generator(num_generations, sess, same_images, inputs, dropout_rate, d
 
 
     input_images, generated = data.reconstruct_original(input_images_list), data.reconstruct_original(generated_list)
-
-    #
 
     input_images = unstack(input_images)
     input_images = np.concatenate((input_images), axis=1)
