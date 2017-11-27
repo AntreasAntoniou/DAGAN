@@ -13,11 +13,11 @@ To use the DAGAN repository you must first install the project dependencies. Thi
 
 ## Datasets
 
-The Omniglot and VGG-Face datasets can be obtained in numpy format <a href="https://drive.google.com/drive/folders/15x2C11OrNeKLMzBDHrv8NPOwyre6H3O5?usp=sharing" target="_blank">here</a>. They should then be placed into the `datasets` folder.
+The Omniglot and VGG-Face datasets can be obtained in numpy format <a href="https://drive.google.com/drive/folders/15x2C11OrNeKLMzBDHrv8NPOwyre6H3O5?usp=sharing" target="_blank">here</a>. They should then be placed in the `datasets` folder.
 
 ## Training a DAGAN
 
-After the datasets are downloaded and the dependencies are installed, a DAGAN be trained by running:
+After the datasets are downloaded and the dependencies are installed, a DAGAN can be trained by running:
 
 ```
 python train_omniglot_dagan.py --batch_size 32 --generator_inner_layers 3 --discriminator_inner_layers 5 --num_generations 64 --experiment_title omniglot_dagan_experiment_default --num_of_gpus 1 --z_dim 100 --dropout_rate_value 0.5
