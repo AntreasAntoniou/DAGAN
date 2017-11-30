@@ -19,6 +19,7 @@ def remove_duplicates(input_features):
         feature_name_set.add(feature.name)
     return non_duplicate_feature_set
 
+
 class UResNetGenerator:
     def __init__(self, layer_sizes, layer_padding, batch_size, num_channels=1,
                  inner_layers=0, name="g"):
@@ -379,6 +380,7 @@ class UResNetGenerator:
             count_parameters(self.variables, name="generator_parameter_num")
         self.build = False
         return gan_decoder, encoder_layers, decoder_layers
+
 
 class Discriminator:
     def __init__(self, batch_size, layer_sizes, inner_layers, name="d"):
