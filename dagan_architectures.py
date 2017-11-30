@@ -5,7 +5,7 @@ from tensorflow.python.ops.nn_ops import leaky_relu
 from utils.network_summary import count_parameters
 
 
-def remove_duplicates(self, input_features):
+def remove_duplicates(input_features):
     """
     Remove duplicate entries from layer list.
     :param input_features: A list of layers
@@ -428,18 +428,19 @@ class Discriminator:
                                                  padding="SAME", activation=activation)
         return outputs
 
-    def add_res_net_encoder_layer(self, input, name, training, layer_to_skip_connect, local_inner_layers, num_features,
-                                  dim_reduce=False, dropout_rate=0.0):
+    def add_encoder_layer(self, input, name, training, layer_to_skip_connect, local_inner_layers, num_features,
+                          dim_reduce=False, dropout_rate=0.0):
 
         """
-        :param input:
-        :param name:
-        :param training:
-        :param layer_to_skip_connect:
-        :param local_inner_layers:
-        :param num_features:
-        :param dim_reduce:
-        :param dropout_rate:
+        Adds a resnet encoder layer.
+        :param input: The input to the encoder layer
+        :param training: Flag for training or validation
+        :param dropout_rate: A float or a placeholder for the dropout rate
+        :param layer_to_skip_connect: Layer to skip-connect this layer to
+        :param local_inner_layers: A list with the inner layers of the current Multi-Layer
+        :param num_features: Number of feature maps for the convolutions
+        :param dim_reduce: Boolean value indicating if this is a dimensionality reducing layer or not
+        :return: The output of the encoder layer
         :return:
         """
         [b1, h1, w1, d1] = input.get_shape().as_list()
@@ -498,26 +499,26 @@ class Discriminator:
                             current_layers.append(outputs)
                         else:
                             for j in range(self.inner_layers[i]):
-                                outputs = self.add_res_net_encoder_layer(input=outputs,
-                                                                         name="encoder_inner_conv_{}_{}"
-                                                                         .format(i, j), training=training,
-                                                                         layer_to_skip_connect=current_layers[-2],
-                                                                         num_features=self.layer_sizes[i],
-                                                                         dropout_rate=dropout_rate,
-                                                                         dim_reduce=False,
-                                                                         local_inner_layers=encoder_inner_layers)
+                                outputs = self.add_encoder_layer(input=outputs,
+                                                                 name="encoder_inner_conv_{}_{}"
+                                                                 .format(i, j), training=training,
+                                                                 layer_to_skip_connect=current_layers[-2],
+                                                                 num_features=self.layer_sizes[i],
+                                                                 dropout_rate=dropout_rate,
+                                                                 dim_reduce=False,
+                                                                 local_inner_layers=encoder_inner_layers)
                                 current_layers.append(outputs)
-                            outputs = self.add_res_net_encoder_layer(input=outputs,
-                                                                     name="encoder_outer_conv_{}"
-                                                                     .format(i),
-                                                                     training=training,
-                                                                     layer_to_skip_connect=
+                            outputs = self.add_encoder_layer(input=outputs,
+                                                             name="encoder_outer_conv_{}"
+                                                             .format(i),
+                                                             training=training,
+                                                             layer_to_skip_connect=
                                                                      current_layers[-2],
-                                                                     local_inner_layers=
+                                                             local_inner_layers=
                                                                      encoder_inner_layers,
-                                                                     num_features=self.layer_sizes[i],
-                                                                     dropout_rate=dropout_rate,
-                                                                     dim_reduce=True)
+                                                             num_features=self.layer_sizes[i],
+                                                             dropout_rate=dropout_rate,
+                                                             dim_reduce=True)
                             current_layers.append(outputs)
                         encoder_layers.append(outputs)
 
