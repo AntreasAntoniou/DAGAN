@@ -1,4 +1,4 @@
-import utils.interpolations
+import utils.interpolations as interpolations
 import numpy as np
 import tqdm
 from utils.storage import save_statistics, build_experiment_folder
