@@ -65,6 +65,8 @@ class ExperimentBuilder(object):
         self.total_gen_batches = data.generation_data_size / (self.batch_size * self.num_gpus)
         self.init = tf.global_variables_initializer()
         self.spherical_interpolation = True
+        self.tensorboard_update_interval = int(self.total_train_batches/100/self.num_gpus)
+        self.total_epochs = 200
 
         if self.continue_from_epoch == -1:
             save_statistics(self.log_path, ["epoch", "total_d_loss", "total_g_loss", "total_d_val_loss",
@@ -108,13 +110,14 @@ class ExperimentBuilder(object):
                 self.z_vectors = np.random.normal(size=(self.num_generations, self.z_dim))
                 self.z_2d_vectors = np.random.normal(size=(self.num_generations, self.z_dim))
 
-            with tqdm.tqdm(total=250-start_from_epoch) as pbar_e:
-                for e in range(start_from_epoch, 250):
+            with tqdm.tqdm(total=self.total_epochs-start_from_epoch) as pbar_e:
+                for e in range(start_from_epoch, self.total_epochs):
 
                     total_g_loss = 0.
                     total_d_loss = 0.
                     save_path = self.saver.save(sess, "{}/{}_{}.ckpt".format(self.saved_models_filepath,
                                                                              self.experiment_name, e))
+                    print("Model saved at", save_path)
                     with tqdm.tqdm(total=self.total_train_batches) as pbar_train:
                         x_train_a_gan_list, x_train_b_gan_same_class_list = self.data.get_train_batch()
 
@@ -193,7 +196,7 @@ class ExperimentBuilder(object):
 
                                 total_g_loss += g_loss_value
 
-                            if i % (int(40 / self.num_gpus)) == 0:
+                            if i % (self.tensorboard_update_interval) == 0:
                                 self.writer.add_summary(summaries)
                             self.iter_done = self.iter_done + 1
                             iter_out = "d_loss: {}, g_loss: {}".format(d_loss_value, g_loss_value)
@@ -205,7 +208,6 @@ class ExperimentBuilder(object):
                     total_d_loss /= (self.total_train_batches * self.disc_iter)
 
                     print("Epoch {}: d_loss: {}, wg_loss: {}".format(e, total_d_loss, total_g_loss))
-
 
                     total_g_val_loss = 0.
                     total_d_val_loss = 0.
