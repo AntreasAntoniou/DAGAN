@@ -102,10 +102,10 @@ class ExperimentBuilder(object):
                 dim = int(np.sqrt(self.num_generations)*2)
                 self.z_2d_vectors = interpolations.create_mine_grid(rows=dim,
                                                                     cols=dim,
-                                                                    dim=self.z_dim, space=1, anchors=None,
+                                                                    dim=self.z_dim, space=3, anchors=None,
                                                                     spherical=True, gaussian=True)
                 self.z_vectors = interpolations.create_mine_grid(rows=1, cols=self.num_generations, dim=self.z_dim,
-                                                                 space=1, anchors=None, spherical=True, gaussian=True)
+                                                                 space=3, anchors=None, spherical=True, gaussian=True)
             else:
                 self.z_vectors = np.random.normal(size=(self.num_generations, self.z_dim))
                 self.z_2d_vectors = np.random.normal(size=(self.num_generations, self.z_dim))
