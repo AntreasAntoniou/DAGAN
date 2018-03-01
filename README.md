@@ -7,7 +7,7 @@ This is an implementation of DAGAN as described in https://arxiv.org/abs/1711.04
 
 ## Installation
 
-To use the DAGAN repository you must first install the project dependencies. This can be done by install miniconda3
+To use the DAGAN repository you must first install the project dependencies. This can be done by install miniconda3 from <a href="https://conda.io/miniconda.html">here</a> 
  with python 3 and running:
 
 ```pip install -r requirements.txt```
