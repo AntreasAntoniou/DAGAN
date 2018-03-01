@@ -196,30 +196,9 @@ class DAGAN:
             tf.summary.image('output_input_b', [tf.concat(tf.unstack(input_b, axis=0), axis=0)])
 
         return {
-            self.g: tf.add_n(tf.get_collection('g_losses'), name='total_g_loss'),
-            self.d: tf.add_n(tf.get_collection('d_losses'), name='total_d_loss')
+            "g_losses": tf.add_n(tf.get_collection('g_losses'), name='total_g_loss'),
+            "d_losses": tf.add_n(tf.get_collection('d_losses'), name='total_d_loss')
         }
-
-    def tower_loss(self, gpu_id):
-
-        """
-        Calculate the losses on a single tower
-        :param gpu_id: The gpu ID to calculate losses for.
-        :return: The tower losses
-        """
-        total_losses = dict()
-        scope = "losses_{}".format(gpu_id)
-        _ = self.loss(gpu_id=gpu_id)
-        d_losses = tf.get_collection('d_losses', scope)
-        g_losses = tf.get_collection('g_losses', scope)
-        # Calculate the total loss for the current tower.
-
-        total_losses["total_d_losses"] = tf.add_n(d_losses)
-        total_losses["total_g_losses"] = tf.add_n(g_losses)
-
-
-
-        return total_losses
 
     def train(self, opts, losses):
 
@@ -232,15 +211,12 @@ class DAGAN:
         opt_ops = dict()
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(update_ops):
-            g_opt_op = opts["g_opt"].minimize(losses["g_losses"],
+            opt_ops["g_opt_op"] = opts["g_opt"].minimize(losses["g_losses"],
                                           var_list=self.g.variables,
                                           colocate_gradients_with_ops=True)
-            d_opt_op = opts["d_opt"].minimize(losses["d_losses"],
+            opt_ops["d_opt_op"] = opts["d_opt"].minimize(losses["d_losses"],
                                                          var_list=self.d.variables,
                                                          colocate_gradients_with_ops=True)
-            opt_ops["g_opt_op"] = g_opt_op
-            opt_ops["d_opt_op"] = d_opt_op
-
         return opt_ops
 
     def init_train(self, learning_rate=1e-4, beta1=0.0, beta2=0.9):
@@ -251,29 +227,27 @@ class DAGAN:
         :param beta2: Beta2 for the Adam optimizer
         :return: summary op, losses and training ops.
         """
-        d_loss = []
-        g_loss = []
 
-        g_opt = tf.train.AdamOptimizer(beta1=beta1, beta2=beta2, learning_rate=learning_rate)
-        d_opt = tf.train.AdamOptimizer(beta1=beta1, beta2=beta2, learning_rate=learning_rate)
-        opts = {"d_opt": d_opt, "g_opt": g_opt}
+        losses = dict()
+        opts = dict()
 
         if self.num_gpus > 0:
             device_ids = ['/gpu:{}'.format(i) for i in range(self.num_gpus)]
         else:
             device_ids = ['/cpu:0']
-        for i, device_id in enumerate(device_ids):
+        for gpu_id, device_id in enumerate(device_ids):
             with tf.device(device_id):
-                total_losses = self.tower_loss(i)
-                g_loss.append(total_losses['total_g_losses'])
-                d_loss.append(total_losses['total_d_losses'])
+                total_losses = self.loss(gpu_id=gpu_id)
+                for key, value in total_losses.items():
+                    if key not in losses.keys():
+                        losses[key] = [value]
+                    else:
+                        losses[key].append(value)
 
-        g_loss = tf.reduce_mean(g_loss, axis=0)
-        d_loss = tf.reduce_mean(d_loss, axis=0)
-
-        losses = {"g_losses": g_loss,
-                  "d_losses": d_loss}
-
+        for key in list(losses.keys()):
+            losses[key] = tf.reduce_mean(losses[key], axis=0)
+            opts[key.replace("losses", "opt")] = tf.train.AdamOptimizer(beta1=beta1, beta2=beta2,
+                                                                            learning_rate=learning_rate)
 
         summary = tf.summary.merge_all()
         apply_grads_ops = self.train(opts=opts, losses=losses)

@@ -274,14 +274,14 @@ class UResNetGenerator:
                                             name='input_dense_1')
                 z_reshape_1 = tf.reshape(z_dense_1, [self.batch_size, concat_shape[1], concat_shape[2], num_filters],
                                          name='z_reshape_1')
-                num_filters = num_filters / 2
+                num_filters = int(num_filters / 2)
                 concat_shape = tuple(encoder_layers[-3].get_shape())
                 concat_shape = [int(i) for i in concat_shape]
                 z_dense_2 = tf.layers.dense(z_inputs, concat_shape[1] * concat_shape[2] * num_filters,
                                             name='input_dense_2')
                 z_reshape_2 = tf.reshape(z_dense_2, [self.batch_size, concat_shape[1] , concat_shape[2], num_filters],
                                          name='z_reshape_2')
-                num_filters = num_filters / 2
+                num_filters = int(num_filters / 2)
                 concat_shape = tuple(encoder_layers[-4].get_shape())
                 concat_shape = [int(i) for i in concat_shape]
                 z_dense_3 = tf.layers.dense(z_inputs, concat_shape[1]* concat_shape[2]  * num_filters,
@@ -526,8 +526,9 @@ class Discriminator:
 
 
             flatten = tf.contrib.layers.flatten(encoder_layers[-1])
+            dense = tf.layers.dense(flatten, units=1024, activation=leaky_relu)
             with tf.variable_scope('discriminator_out'):
-                outputs = tf.layers.dense(flatten, 1, name='outputs')
+                outputs = tf.layers.dense(dense, 1, name='outputs')
         self.reuse = True
         self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
         #view_names_of_variables(self.variables)

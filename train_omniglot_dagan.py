@@ -7,7 +7,7 @@ parser.add_argument('--batch_size', nargs="?", type=int, default=32, help='batch
 parser.add_argument('--discriminator_inner_layers', nargs="?", type=int, default=1,
                     help='discr_number_of_conv_per_layer')
 parser.add_argument('--generator_inner_layers', nargs="?", type=int, default=1, help='discr_number_of_conv_per_layer')
-parser.add_argument('--experiment_title', nargs="?", type=str, default="densenet_generator_fc", help='Experiment name')
+parser.add_argument('--experiment_title', nargs="?", type=str, default="omniglot_dagan_experiment", help='Experiment name')
 parser.add_argument('--continue_from_epoch', nargs="?", type=int, default=-1, help='continue from checkpoint of epoch')
 parser.add_argument('--num_of_gpus', nargs="?", type=int, default=1, help='discr_number_of_conv_per_layer')
 parser.add_argument('--z_dim', nargs="?", type=int, default=100, help='The dimensionality of the z input')
