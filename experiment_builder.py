@@ -281,10 +281,10 @@ class ExperimentBuilder(object):
                             self.experiment_name, e))
                         print("Saved current best val model at", val_save_path)
 
-                        save_statistics(self.log_path, [e, total_d_train_loss_mean, total_d_val_loss_mean,
-                                                    total_d_train_loss_std, total_d_val_loss_std,
-                                                    total_g_train_loss_mean, total_g_val_loss_mean,
-                                                    total_g_train_loss_std, total_g_val_loss_std])
+                    save_statistics(self.log_path, [e, total_d_train_loss_mean, total_d_val_loss_mean,
+                                                total_d_train_loss_std, total_d_val_loss_std,
+                                                total_g_train_loss_mean, total_g_val_loss_mean,
+                                                total_g_train_loss_std, total_g_val_loss_std])
 
                     pbar_e.update(1)
 
