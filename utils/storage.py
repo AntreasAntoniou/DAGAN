@@ -2,7 +2,7 @@ import csv
 
 def save_statistics(log_path, line_to_add, log_name="experiment_log.csv", create=False):
     if create:
-        with open("{}.{}".format(log_path, log_name), 'w+') as f:
+        with open("{}/{}".format(log_path, log_name), 'w+') as f:
             writer = csv.writer(f)
             writer.writerow(line_to_add)
     else:
