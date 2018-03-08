@@ -90,7 +90,7 @@ class ExperimentBuilder(object):
                 fine_tune(sess)
             if self.spherical_interpolation:
                 z_vectors = interpolations.create_mine_grid(rows=self.num_generations, cols=self.num_generations,
-                                                            dim=100, space=1, anchors=None,
+                                                            dim=100, space=3, anchors=None,
                                                             spherical=True, gaussian=True)
             else:
                 z_vectors = np.random.normal(size=(self.num_generations * self.num_generations, self.z_dim))
