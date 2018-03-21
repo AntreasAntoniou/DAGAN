@@ -115,7 +115,7 @@ class UResNetGenerator:
             [b0, h0, w0, d0] = layer_to_skip_connect.get_shape().as_list()
             if h0 > h1:
                 skip_connect_layer = self.conv_layer(layer_to_skip_connect, int(layer_to_skip_connect.get_shape()[3]),
-                                                     [1, 1], strides=(2, 2))
+                                                     [3, 3], strides=(2, 2))
             else:
                 skip_connect_layer = layer_to_skip_connect
             current_layers = [input, skip_connect_layer]
@@ -171,7 +171,7 @@ class UResNetGenerator:
             if h0 < h1:
                 skip_connect_layer = self.conv_layer(layer_to_skip_connect,
                                                      int(layer_to_skip_connect.get_shape()[3]),
-                                                     [1, 1], strides=(1, 1),
+                                                     [3, 3], strides=(1, 1),
                                                      transpose=True,
                                                      h_size=h_size,
                                                      w_size=w_size)
@@ -451,7 +451,7 @@ class Discriminator:
 
             if h0 > h1:
                 skip_connect_layer = self.conv_layer(layer_to_skip_connect, int(layer_to_skip_connect.get_shape()[3]),
-                                                     [1, 1], strides=(2, 2))
+                                                     [3, 3], strides=(2, 2))
             else:
                 skip_connect_layer = layer_to_skip_connect
         else:
