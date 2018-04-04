@@ -510,6 +510,7 @@ class Discriminator:
                                                                  dim_reduce=False,
                                                                  local_inner_layers=encoder_inner_layers)
                                 current_layers.append(outputs)
+                                encoder_inner_layers.append(outputs)
                             outputs = self.add_encoder_layer(input=outputs,
                                                              name="encoder_outer_conv_{}"
                                                              .format(i),
