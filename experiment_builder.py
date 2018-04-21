@@ -87,7 +87,7 @@ class ExperimentBuilder(object):
             start_from_epoch = 0
             if self.continue_from_epoch!=-1:
                 start_from_epoch = self.continue_from_epoch
-                checkpoint = "{}/{}_{}.ckpt".format(self.saved_models_filepath, self.experiment_name, self.continue_from_epoch)
+                checkpoint = "{}train_saved_model_{}_{}.ckpt".format(self.saved_models_filepath, self.experiment_name, self.continue_from_epoch)
                 variables_to_restore = []
                 for var in tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES):
                     print(var)
