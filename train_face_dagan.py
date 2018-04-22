@@ -4,14 +4,18 @@ from experiment_builder import ExperimentBuilder
 
 parser = argparse.ArgumentParser(description='Welcome to GAN-Shot-Learning script')
 parser.add_argument('--batch_size', nargs="?", type=int, default=32, help='batch_size for experiment')
-parser.add_argument('--discriminator_inner_layers', nargs="?", type=int, default=9, help='discr_number_of_conv_per_layer')
-parser.add_argument('--generator_inner_layers', nargs="?", type=int, default=3, help='discr_number_of_conv_per_layer')
+parser.add_argument('--discriminator_inner_layers', nargs="?", type=int, default=9,
+                    help='Number of inner layers per multi layer in the discriminator')
+parser.add_argument('--generator_inner_layers', nargs="?", type=int, default=3, 
+                    help='Number of inner layers per multi layer in the generator')
 parser.add_argument('--experiment_title', nargs="?", type=str, default="vgg_face_dagan_experiment", help='Experiment name')
 parser.add_argument('--continue_from_epoch', nargs="?", type=int, default=-1, help='continue from checkpoint of epoch')
-parser.add_argument('--num_of_gpus', nargs="?", type=int, default=1, help='discr_number_of_conv_per_layer')
+parser.add_argument('--num_of_gpus', nargs="?", type=int, default=1, help='Number of GPUs to use for training')
 parser.add_argument('--z_dim', nargs="?", type=int, default=100, help='The dimensionality of the z input')
-parser.add_argument('--dropout_rate_value', type=float, default=0.3, help='dropout_rate_value')
-parser.add_argument('--num_generations', nargs="?", type=int, default=64, help='num_generations')
+parser.add_argument('--dropout_rate_value', type=float, default=0.3,
+                    help='A dropout rate placeholder or a scalar to use throughout the network')
+parser.add_argument('--num_generations', nargs="?", type=int, default=64,
+                    help='The number of samples generated for use in the spherical interpolations at the end of each epoch')
 
 args = parser.parse_args()
 batch_size = args.batch_size
