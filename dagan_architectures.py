@@ -373,7 +373,7 @@ class UResNetGenerator:
                 gan_decoder = tf.tanh(outputs, name='outputs')
 
         self.reuse = True
-        self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='g')
+        self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
 
         if self.build:
             print("generator_total_layers", self.conv_layer_num)
