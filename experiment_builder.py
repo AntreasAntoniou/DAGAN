@@ -9,10 +9,9 @@ from utils.sampling import sample_generator, sample_two_dimensions_generator
 
 
 class ExperimentBuilder(object):
-    def __init__(self, parser, data):
+    def __init__(self, args, data):
         tf.reset_default_graph()
 
-        args = parser.parse_args()
         self.continue_from_epoch = args.continue_from_epoch
         self.experiment_name = args.experiment_title
         self.saved_models_filepath, self.log_path, self.save_image_path = build_experiment_folder(self.experiment_name)
