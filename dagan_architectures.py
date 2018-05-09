@@ -383,7 +383,7 @@ class UResNetGenerator:
 
 
 class Discriminator:
-    def __init__(self, batch_size, layer_sizes, inner_layers, name="d"):
+    def __init__(self, batch_size, layer_sizes, inner_layers, use_wide_connections=False, name="d"):
         """
         Initialize a discriminator network.
         :param batch_size: Batch size for discriminator.
@@ -395,6 +395,7 @@ class Discriminator:
         self.layer_sizes = layer_sizes
         self.inner_layers = inner_layers
         self.conv_layer_num = 0
+        self.use_wide_connections = use_wide_connections
         self.build = True
         self.name = name
 
@@ -526,7 +527,14 @@ class Discriminator:
                         encoder_layers.append(outputs)
 
 
-            flatten = tf.contrib.layers.flatten(encoder_layers[-1])
+            if self.use_wide_connections:
+                mean_encoder_layers = []
+                for layer in encoder_layers:
+                    mean_encoder_layers.append(tf.reduce_mean(layer, axis=[1, 2]))
+                flatten = tf.concat(mean_encoder_layers, axis=1)
+            else:
+                flatten = tf.contrib.layers.flatten(encoder_layers[-1])
+                
             dense = tf.layers.dense(flatten, units=1024, activation=leaky_relu)
             with tf.variable_scope('discriminator_out'):
                 outputs = tf.layers.dense(dense, 1, name='outputs')
