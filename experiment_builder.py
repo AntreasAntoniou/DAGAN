@@ -54,7 +54,8 @@ class ExperimentBuilder(object):
                       is_training=self.training_phase, augment=self.random_rotate,
                       discriminator_layer_sizes=discriminator_layers,
                       discr_inner_conv=discr_inner_layers,
-                      gen_inner_conv=gen_inner_layers, num_gpus=self.num_gpus, z_dim=self.z_dim, z_inputs=self.z_input)
+                      gen_inner_conv=gen_inner_layers, num_gpus=self.num_gpus, z_dim=self.z_dim, z_inputs=self.z_input,
+                      use_wide_connections=args.use_wide_connections)
 
         self.summary, self.losses, self.graph_ops = dagan.init_train()
         self.same_images = dagan.sample_same_images()
