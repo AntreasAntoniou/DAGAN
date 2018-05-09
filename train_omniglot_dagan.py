@@ -16,6 +16,7 @@ parser.add_argument('--dropout_rate_value', type=float, default=0.5,
                     help='A dropout rate placeholder or a scalar to use throughout the network')
 parser.add_argument('--num_generations', nargs="?", type=int, default=64,
                     help='The number of samples generated for use in the spherical interpolations at the end of each epoch')
+parser.add_argument('--use_wide_connections', nargs="?", type=str, default="False", help='Whether to use wide connections in discriminator')
 
 args = parser.parse_args()
 batch_size = args.batch_size
