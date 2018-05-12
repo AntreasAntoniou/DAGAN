@@ -527,17 +527,24 @@ class Discriminator:
                         encoder_layers.append(outputs)
 
 
-            if self.use_wide_connections:
-                mean_encoder_layers = []
-                for layer in encoder_layers:
-                    mean_encoder_layers.append(tf.reduce_mean(layer, axis=[1, 2]))
-                flatten = tf.concat(mean_encoder_layers, axis=1)
-            else:
-                flatten = tf.contrib.layers.flatten(encoder_layers[-1])
-                
-            dense = tf.layers.dense(flatten, units=1024, activation=leaky_relu)
-            with tf.variable_scope('discriminator_out'):
-                outputs = tf.layers.dense(dense, 1, name='outputs')
+            with tf.variable_scope('discriminator_dense_block'):
+                if self.use_wide_connections:
+                    mean_encoder_layers = []
+                    concat_encoder_layers = []
+                    for layer in encoder_layers:
+                        mean_encoder_layers.append(tf.reduce_mean(layer, axis=[1, 2]))
+                        concat_encoder_layers.append(tf.layers.flatten(layer))
+                    feature_level_flatten = tf.concat(mean_encoder_layers, axis=1)
+                    location_level_flatten = tf.concat(concat_encoder_layers, axis=1)
+                else:
+                    feature_level_flatten = tf.reduce_mean(encoder_layers[-1], axis=[1, 2])
+                    location_level_flatten = tf.layers.flatten(encoder_layers[-1])
+
+                feature_level_dense = tf.layers.dense(feature_level_flatten, units=1024, activation=leaky_relu)
+                combo_level_flatten = tf.concat([feature_level_dense, location_level_flatten], axis=1)
+            with tf.variable_scope('discriminator_out_block'):
+                outputs = tf.layers.dense(combo_level_flatten, 1, name='outputs')
+
         self.reuse = True
         self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
         #view_names_of_variables(self.variables)
