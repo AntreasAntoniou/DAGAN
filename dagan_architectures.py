@@ -262,34 +262,19 @@ class UResNetGenerator:
                                                          # improves quality of results. We inject in the first 3 decode
                                                          # multi layers
                 num_filters = 8
-                concat_shape = tuple(encoder_layers[-1].get_shape())
-                concat_shape = [int(i) for i in concat_shape]
-                z_dense_0 = tf.layers.dense(z_inputs, concat_shape[1] * concat_shape[2] * num_filters,
-                                            name='input_dense_0')
-                z_reshape_0 = tf.reshape(z_dense_0, [self.batch_size, concat_shape[1], concat_shape[2], num_filters],
-                                         name='z_reshape_0')
-                concat_shape = tuple(encoder_layers[-2].get_shape())
-                concat_shape = [int(i) for i in concat_shape]
-                z_dense_1 = tf.layers.dense(z_inputs, concat_shape[1] * concat_shape[2] * num_filters,
-                                            name='input_dense_1')
-                z_reshape_1 = tf.reshape(z_dense_1, [self.batch_size, concat_shape[1], concat_shape[2], num_filters],
-                                         name='z_reshape_1')
-                num_filters = int(num_filters / 2)
-                concat_shape = tuple(encoder_layers[-3].get_shape())
-                concat_shape = [int(i) for i in concat_shape]
-                z_dense_2 = tf.layers.dense(z_inputs, concat_shape[1] * concat_shape[2] * num_filters,
-                                            name='input_dense_2')
-                z_reshape_2 = tf.reshape(z_dense_2, [self.batch_size, concat_shape[1] , concat_shape[2], num_filters],
-                                         name='z_reshape_2')
-                num_filters = int(num_filters / 2)
-                concat_shape = tuple(encoder_layers[-4].get_shape())
-                concat_shape = [int(i) for i in concat_shape]
-                z_dense_3 = tf.layers.dense(z_inputs, concat_shape[1]* concat_shape[2]  * num_filters,
-                                            name='input_dense_3')
-                z_reshape_3 = tf.reshape(z_dense_3, [self.batch_size, concat_shape[1] , concat_shape[2], num_filters],
-                                         name='z_reshape_3')
+                z_layers = []
+                concat_shape = [layer_shape.get_shape().as_list() for layer_shape in encoder_layers]
 
-            z_layers = [z_reshape_0, z_reshape_1, z_reshape_2, z_reshape_3]
+                for i in range(len(self.inner_layers)):
+                    h = concat_shape[len(encoder_layers) - 1 - i][1]
+                    w = concat_shape[len(encoder_layers) - 1 - i][1]
+                    z_dense = tf.layers.dense(z_inputs, h * w * num_filters)
+                    z_reshape_noise = tf.reshape(z_dense, [self.batch_size, h, w, num_filters])
+                    num_filters /= 2
+                    num_filters = int(num_filters)
+                    print(z_reshape_noise)
+                    z_layers.append(z_reshape_noise)
+
             outputs = g_conv_encoder
             decoder_layers = []
             current_layers = [outputs]
