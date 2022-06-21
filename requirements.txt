@@ -1,5 +1,5 @@
 tensorflow_gpu==1.6.0
 tqdm==4.11.2
-numpy==1.14.1
+numpy==1.22.0
 scipy==0.18.1
 Pillow==4.3.0
